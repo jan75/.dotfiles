@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+kscreen_output=$(kscreen-doctor -j)
+
+# get DisplayPort 1 ID (left screen). Name: S2719DGF/7BW05V2
+left_screen_id=$(jq '.outputs[] | select(.name | contains("DP-1")) | .id' <<< $kscreen_output)
+
+# get DisplayPort 2 ID (right screen). Name: S2719DGF/9VM05V2
+right_screen_id=$(jq '.outputs[] | select(.name | contains("DP-3")) | .id' <<< $kscreen_output)
+
+# get HDMI 1 ID (TV). Name: SAMSUNG/16780800
+tv_id=$(jq '.outputs[] | select(.name | contains("HDMI-A-1")) | .id' <<< $kscreen_output)
+
+# update settins
+kscreen-doctor \
+    output.$tv_id.mode.1920x1080@60 \
+    output.$tv_id.position.0,0 \
+    output.$tv_id.primary \
+    output.$tv_id.enable \
+    output.$left_screen_id.disable \
+    output.$right_screen_id.disable
+
+# change sound output
+pa tv 

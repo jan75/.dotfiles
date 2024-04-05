@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import sys
+
+parser = argparse.ArgumentParser(description='Give files in folders the name of the folder. Point to the files, i.E. file_rename_to_folder ./**/*')
+parser.add_argument(metavar='file', dest='files', type=str, nargs='+')
+
+
+def check_file(path: str) -> bool:
+    return os.path.exists(path) and os.path.isfile(path)
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    files = args.files
+
+    for path in files:
+        if not check_file(path):
+            print('Invalid path or file: {}'.format(path))
+            continue
+
+        # normalize path and make absolute
+        path = os.path.abspath(os.path.normpath(path))
+        # print('path: {}'.format(path))
+
+        # name of containing directory (split to get filename, split again to get deepest directory)
+        _, dirname = os.path.split(os.path.split(path)[0])
+        # print('dirname: {}'.format(dirname))
+
+        # basename = filename
+        basename = os.path.basename(path)
+        # print('basename: {}'.format(basename))
+
+        filename, extension = os.path.splitext(basename)
+        # print('filename: {}, extension: {}'.format(filename, extension))
+
+        new_file_name = '{}{}'.format(dirname, extension)
+        # print('new_file_name: {}'.format(new_file_name))
+
+        # skimming file from path
+        path_first_part, _ = os.path.split(path)
+
+        new_path = os.path.join(os.path.abspath(path_first_part), new_file_name)
+        # print('new_path: {}'.format(new_path))
+
+        try:
+            if check_file(new_path):
+                print('File {} to be renamed to {} already exists, wont overwrite'.format(path, new_path))
+                continue
+
+            os.rename(path, new_path)
+        except Exception as e:
+            print('Could not rename file {} to {}: {}'.format(path, new_path, e))
+            continue

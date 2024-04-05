@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+DEVICE=$1
+
+# read input, parse list of available sinks (outputs)
+if [ "$DEVICE" = "pc" ]
+then
+	OUTPUT=($(pactl list short sinks | awk '{print $2}' | grep -i -E 'hdmi|samson|Targus' -v))
+elif [ "$DEVICE" = "tv" ]
+then	
+	OUTPUT=($(pactl list short sinks | awk '{print $2}' | grep -i -E 'hdmi'))
+else
+	echo "No valid input (must be either 'pc' or 'tv')"
+	exit -1
+fi
+
+# get all currently connected streams
+INPUTS=($(pactl list short sink-inputs | awk '{print $1}'))
+
+# change default sink (for new audio outputs)
+pactl set-default-sink $OUTPUT
+
+# switch sink for existing audio outputs
+for i in "${INPUTS[@]}"
+do
+	pactl move-sink-input $i $OUTPUT
+done
+
+# use notify-send to send a visual notification to the user that the sink changed
+notify-send -c info "Default sink changed" "Changed default sink and sink-inputs to $OUTPUT"

@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import sys
+
+parser = argparse.ArgumentParser(description='Move files to a folder')
+parser.add_argument(metavar='file', dest='files', type=str, nargs='+')
+
+
+def check_file(path: str) -> bool:
+    return os.path.exists(path) and os.path.isfile(path)
+        
+class StagedMove:
+    
+    def __init__(self, path: str):
+        self.path = os.path.abspath(os.path.normpath(path))
+        
+        self.filename, file_extension = os.path.splitext(self.path)
+        self.new_path = os.path.join(self.path, self.filename, os.path.basename(self.path))
+        
+    def __str__(self) -> str:
+        old_path_str = self.path
+        return '{} => {}{}{}'.format(os.path.basename(self.path), os.path.basename(os.path.dirname(self.new_path)), os.sep, os.path.basename(self.new_path))
+    
+    def move(self):
+        new_parent = os.path.dirname(self.new_path)
+        if not os.path.exists(new_parent):
+            os.mkdir(new_parent)
+        
+        os.rename(self.path, self.new_path)
+    
+    def __repr__(self) -> str:
+        return self.__str__()
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    files = args.files
+
+    staged_moves = []
+    
+    max_old_path_length, max_new_path_length = 0, 0
+    
+    for path in files:
+        if not check_file(path):
+            print('Invalid path or file: {}'.format(path))
+            sys.exit(1)
+                    
+        staged_moves.append(StagedMove(path))
+        
+    #print('The following files will be moved:')
+    #[print('  {}'.format(str(staged_move))) for staged_move in staged_moves]
+    #print()
+    
+    #check_continue = input('Continue? [y/n]: ')
+    #check_continue = input('{} files will be moved. Continue? [y/n]: '.format(len(staged_moves)))
+    #if check_continue.lower() in ['y', 'yes']:
+    #[staged_move.move() for staged_move in staged_moves]
+    [staged_move.move() for staged_move in staged_moves]
