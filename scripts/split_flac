@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+CUE_FILE=$1
+FLAC_FILE=$2
+
+mkdir split_files
+shnsplit -f "${CUE_FILE}" -o flac -t "%n. %t" -d split_files "${FLAC_FILE}"
+cuetag.sh "${CUE_FILE}" split_files/*.flac
+
+echo "Split and tagged files into subfolder 'split_files'"
