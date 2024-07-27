@@ -1,9 +1,28 @@
 #!/usr/bin/env bash
+usage() {
+    echo "Usage: $0 <cue_file> <flac_file>"
+    exit 1
+}
+
+if ! hash shnsplit || ! hash cuetag.sh;
+then
+    echo "$0 requires shnsplit and cuetag.sh to be available"
+    exit 1
+fi
+
+
+if [[ ( "$@" -eq "--help") || ( "$@" -eq "-h") || ( "$#" -ne 2 ) ]];
+then
+    usage
+fi
+
+
 CUE_FILE=$1
 FLAC_FILE=$2
 
-mkdir split_files
+echo "Splitting and tagging '${FLAC_FILE}' using '${CUE_FILE}' into subfolder 'split_files'"
+
+mkdir -p split_files
 shnsplit -f "${CUE_FILE}" -o flac -t "%n. %t" -d split_files "${FLAC_FILE}"
 cuetag.sh "${CUE_FILE}" split_files/*.flac
 
-echo "Split and tagged files into subfolder 'split_files'"

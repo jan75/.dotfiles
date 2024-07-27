@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+usage() {
+    echo "Usage: $0 <cue_file> <wavpack>"
+    exit 1
+}
+
+if ! hash wvunpack || ! hash shnsplit || ! hash cuetag.sh;
+then
+    echo "$0 requires wvunpack, shnsplit and cuetag.sh to be available"
+    exit 1
+fi
+
+
+if [[ ( "$@" -eq "--help") || ( "$@" -eq "-h") || ( "$#" -ne 2 ) ]];
+then
+    usage
+fi
+
+
+CUE_FILE=$1
+WAVPACK=$2
+TMPWAVFILENAME=tmp.wav
+
+echo "Splitting and tagging '${WAVPACK}' using '${CUE_FILE}' into subfolder 'split_files'"
+
+mkdir -p split_files
+wvunpack "${WAVPACK}" -o "${TMPWAVFILENAME}"
+shnsplit -f "${CUE_FILE}" -o flac -t "%n. %t" -d split_files "${TMPWAVFILENAME}"
+cuetag.sh "${CUE_FILE}" split_files/*.flac
+rm "${TMPWAVFILENAME}"
+
