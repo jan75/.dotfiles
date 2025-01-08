@@ -17,8 +17,8 @@ kscreen-doctor \
     output.$left_screen_id.enable \
     output.$right_screen_id.mode.2560x1440@144 \
     output.$right_screen_id.position.2560,0 \
-    output.$right_screen_id.primary \
     output.$right_screen_id.enable \
+    output.$right_screen_id.primary \
     output.$tv_id.disable
 
 # change default pulseaudio (or pipewire-pulse) output to "pc" (see respective script)

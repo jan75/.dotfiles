@@ -248,10 +248,6 @@ input * xkb_layout "ch"
 bindcode 122 exec pamixer -d 3
 bindcode 123 exec pamixer -i 3
 
-# brightness keybindings 
-bindcode 232 exec light -U 5
-bindcode 233 exec light -A 5
-
 # autostart 
 exec nextcloud --background
 

@@ -10,7 +10,7 @@ right_screen_id=$(jq '.outputs[] | select(.name | contains("DP-3")) | .id' <<< $
 # get HDMI 1 ID (TV). Name: SAMSUNG/16780800
 tv_id=$(jq '.outputs[] | select(.name | contains("HDMI-A-1")) | .id' <<< $kscreen_output)
 
-# update settins
+# update settings
 kscreen-doctor \
     output.$tv_id.mode.1920x1080@60 \
     output.$tv_id.position.0,0 \
@@ -20,4 +20,4 @@ kscreen-doctor \
     output.$right_screen_id.disable
 
 # change sound output
-pa tv 
+pa tv
