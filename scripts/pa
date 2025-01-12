@@ -2,14 +2,11 @@
 DEVICE=$1
 
 # read input, parse list of available sinks (outputs)
-if [ "$DEVICE" = "pc" ]
-then
-	OUTPUT=($(pactl list short sinks | awk '{print $2}' | grep -i -E 'hdmi|samson|Targus' -v))
-elif [ "$DEVICE" = "tv" ]
-then	
+if [ "$DEVICE" = "pc" ]; then
+	OUTPUT=($(pactl list short sinks | awk '{print $2}' | grep -i -E 'hdmi|samson|targus' -v))
+elif [ "$DEVICE" = "tv" ]; then
 	OUTPUT=($(pactl list short sinks | awk '{print $2}' | grep -i -E 'hdmi'))
-elif [ "$DEVICE" = "samson" ]
-then
+#elif [ "$DEVICE" = "samson" ]; then
 	OUTPUT=($(pactl list short sinks | awk '{print $2}' | grep -i -E 'samson'))
 else
 	echo "No valid input (must be either 'pc', 'tv' or 'samson')"
